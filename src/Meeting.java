@@ -3,34 +3,46 @@ import java.util.Date;
 
 public class Meeting {
 	
-	private ArrayList<Person> attendees;
+	private String title;
+	private ArrayList<Person> attendeeList;
 	private Date startDate;
 	private Date endDate;
 
-	
-	public Meeting(ArrayList<Person> attendeesList, Date sDate, Date eDate){
-
-		attendees = attendeesList;
+	//
+	public Meeting(String title, ArrayList<Person> attendeeListList, Date sDate, Date eDate){
+		this.title = title;
+		this.attendeeList = attendeeListList;
 		startDate = sDate;
 		endDate = eDate;
 	}
 	
+	public Meeting(ArrayList<Person> attendeeListList, Date sDate, Date eDate){
+		title = "meeting";
+		this.attendeeList = attendeeListList;
+		startDate = sDate;
+		endDate = eDate;
+	}
+	
+	//"send" an email to each person in the meeting.
 	public void NotifyAll(String msg){
 		Person recipient;
-		for(int i = 0; i< attendees.size(); i++){
-			recipient = attendees.get(i);
+		for(int i = 0; i< attendeeList.size(); i++){
+			recipient = attendeeList.get(i);
 			recipient.sendEmail(msg);
 		}
 	}
 	
+	
+	//getters
 	public Date getStartDate(){
 		return startDate;
 	}
-	
 	public Date getEndDate(){
 		return endDate;
 	}
 	
+	
+	//Returns true or fales for if the meeting times overlap. Can be cleaned up if feeling adventerous. 
 	public boolean overlaps(Meeting m){
 		
 		//meeting is before

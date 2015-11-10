@@ -10,6 +10,7 @@ public class Person {
 		this.role = role;
 	}
 	
+	//Fake send email method for "contacting" people. 
 	public void sendEmail(String message){
 		System.out.println("Email sent to " + name);
 	}
