@@ -3,9 +3,22 @@ import java.util.Date;
 
 public class testingLand {
 
+	
+	//This is just where i'm throwing random code to test various functions. 
+	//
+	//
+	//
+	//
+	//PLEASE MAKE A TEST COMMIT!! THROW SOME RANDOM COMMENT HERE!!
+	//
+	//RICHARD: Food tastes great!!
+	//JOE:
+	//MATT:
+	//
+	//
+	//
+	
 	public static void main(String[] args) {
-
-		//Testing "email sending"
 		ArrayList<Person> people = new ArrayList<Person>();
 		people.add(new Person("bob", "bob@bob.com", "manager"));
 		people.add(new Person("bob2", "bob@bob.com", "manager"));
