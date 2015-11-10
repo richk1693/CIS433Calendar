@@ -42,7 +42,7 @@ public class Meeting {
 	}
 	
 	
-	//Returns true or fales for if the meeting times overlap. Can be cleaned up if feeling adventerous. 
+	//Returns true or false for if the meeting times overlap. Can be cleaned up if feeling brave. 
 	public boolean overlaps(Meeting m){
 		
 		//meeting is before

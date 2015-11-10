@@ -4,7 +4,7 @@ import java.util.Date;
 public class testingLand {
 
 	
-	//This is just where i'm throwing random code to test various functions. 
+	
 	//
 	//
 	//
@@ -18,6 +18,7 @@ public class testingLand {
 	//
 	//
 	
+	//This is just where i'm throwing random code to test various functions. 
 	public static void main(String[] args) {
 		ArrayList<Person> people = new ArrayList<Person>();
 		people.add(new Person("bob", "bob@bob.com", "manager"));
