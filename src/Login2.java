@@ -2,7 +2,6 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -187,7 +186,7 @@ public class Login2 extends Application {
 		// getClass().getClassLoader().getResource("login.css")
 		// .toExternalForm());
 
-		primaryStage.setScene(scene);
+		primaryStage.setScene(mainScene());
 
 		primaryStage.titleProperty().bind(
 
@@ -212,11 +211,11 @@ public class Login2 extends Application {
 		RadioButton rbUK = new RadioButton("Room 102");
 		RadioButton rbCA = new RadioButton("Room 103");
 		
-		ListView<String> list = new ListView<String>();
+		ListView<String> meetingList = new ListView<String>();
 		ObservableList<String> items =FXCollections.observableArrayList (
 		    "Meeting1", "Meeting2", "Meeting3", "meeting4");
 		
-		list.setItems(items);
+		meetingList.setItems(items);
 
 		// vBox.getChildren().addAll(rbUS, rbUK, rbCA);
 		for (int i = 1; i < 5; i++) {
@@ -224,14 +223,19 @@ public class Login2 extends Application {
 			rb.setToggleGroup(group);
 			vBox.getChildren().add(rb);
 		}
+		
+		
 		SplitPane content = new SplitPane();
-		content.setOrientation(Orientation.VERTICAL);
-		StackPane imagePane = new StackPane();
+		content.setOrientation(Orientation.HORIZONTAL);
+		
 		TextArea taDescription = new TextArea();
 		taDescription.setText("hi");
-		content.getItems().addAll(list, new ScrollPane(taDescription));
+		content.getItems().addAll(vBox, meetingList);
+		
 		SplitPane sp = new SplitPane();
-		sp.getItems().addAll(vBox, content);
+		sp.getItems().addAll(content, new ScrollPane(taDescription));
+		sp.setOrientation(Orientation.VERTICAL);
+
 		Scene scene = new Scene(sp, 600, 350);
 
 		return scene;
