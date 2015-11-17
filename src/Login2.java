@@ -1,18 +1,29 @@
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Reflection;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -44,11 +55,8 @@ public class Login2 extends Application {
 	public void start(Stage primaryStage) {
 
 		primaryStage.setTitle("433 Calendar Login");
-
 		BorderPane bp = new BorderPane();
-
 		bp.setPadding(new Insets(10, 50, 50, 50));
-
 		// Adding HBox
 
 		HBox hb = new HBox();
@@ -133,10 +141,10 @@ public class Login2 extends Application {
 
 		// Action for btnLogin
 
-		btnLogin.setOnAction(new EventHandler() {
+		btnLogin.setOnAction(new EventHandler<ActionEvent>() {
 
-			public void handle(Event event) {
-
+			@Override
+			public void handle(ActionEvent arg0) {
 				checkUser = txtUserName.getText().toString();
 
 				checkPw = pf.getText().toString();
@@ -144,8 +152,8 @@ public class Login2 extends Application {
 				if (checkUser.equals(user) && checkPw.equals(pw)) {
 
 					lblMessage.setText("Congratulations!");
-
 					lblMessage.setTextFill(Color.GREEN);
+					primaryStage.setScene(mainScene());
 
 				}
 
@@ -192,6 +200,41 @@ public class Login2 extends Application {
 		// primaryStage.setResizable(false);
 
 		primaryStage.show();
+
+	}
+
+	public Scene mainScene() {
+
+		ToggleGroup group = new ToggleGroup();
+		VBox vBox = new VBox(10);
+
+		RadioButton rbUS = new RadioButton("Room 101");
+		RadioButton rbUK = new RadioButton("Room 102");
+		RadioButton rbCA = new RadioButton("Room 103");
+		
+		ListView<String> list = new ListView<String>();
+		ObservableList<String> items =FXCollections.observableArrayList (
+		    "Meeting1", "Meeting2", "Meeting3", "meeting4");
+		
+		list.setItems(items);
+
+		// vBox.getChildren().addAll(rbUS, rbUK, rbCA);
+		for (int i = 1; i < 5; i++) {
+			RadioButton rb = new RadioButton("Room " + i);
+			rb.setToggleGroup(group);
+			vBox.getChildren().add(rb);
+		}
+		SplitPane content = new SplitPane();
+		content.setOrientation(Orientation.VERTICAL);
+		StackPane imagePane = new StackPane();
+		TextArea taDescription = new TextArea();
+		taDescription.setText("hi");
+		content.getItems().addAll(list, new ScrollPane(taDescription));
+		SplitPane sp = new SplitPane();
+		sp.getItems().addAll(vBox, content);
+		Scene scene = new Scene(sp, 600, 350);
+
+		return scene;
 
 	}
 
