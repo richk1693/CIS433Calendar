@@ -32,7 +32,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /* Features that need implemented
- * 
+ 
 Request a room of a given size for a period of time
 
 Request existing meeting be scheduled with start/end time
@@ -47,7 +47,7 @@ Totally delete meeting. *Done*
 
 Email each attendee upon cancel. 
 
-If 0 attendees remove meeting occurances
+If 0 attendees remove meeting occurrences
 
 Employee interface
 
@@ -178,7 +178,6 @@ public class Login2 extends Application {
 	}
 
 	public Scene mainScene() {
-		//variables
 
 		//Create gui elements
 		ToggleGroup group = new ToggleGroup();
@@ -207,6 +206,8 @@ public class Login2 extends Application {
 						updatedMeetings.add(currentRoom.getMeetings().get(j).toString()+ " in " + currentRoom.toString());
 					}
 					meetingList.setItems(updatedMeetings);
+					
+					//I guess i'll leave this in for now since it's everyone's favorite line
 					taDescription.setText("MUFFINSAAAAAAA");
 				
 				
@@ -222,19 +223,28 @@ public class Login2 extends Application {
 		Button reserveRoom = new Button("reserve room");
 		Button deleteMeeting = new Button("delete meeting");
 		
+		//On click event for the meeting
 		deleteMeeting.setOnAction(e ->{
+			
+			//Get the index of the currently selected meeting and room
 			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
 			int roomIndex = -1;
-			//Find selected toggle
+			//Go through each thing in the toggle group and find the selected radio button.
+			//There literally HAS TO be an easy way to do this but I can't find it so i wrote it myself
 			for(int i = 0; i< group.getToggles().size(); i++){
 				if(group.getToggles().get(i).isSelected()){
 					roomIndex = i;
 				}
 			}
 			
+			//Create a var holding the list of meetings for the selected room
 			ArrayList<Meeting> currentList = roomList.get(roomIndex).getMeetings();
+			//Remove the selected meeting
 			currentList.remove(meetingIndex);
+			//Add the new meeting list back to the room.
 			roomList.get(roomIndex).setMeetings(currentList);
+			
+			//Update the list of meetings gui (the same as on click for radio buttons)
 			ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
 			for(int j = 0; j<roomList.get(roomIndex).getMeetings().size(); j++){
 				updatedMeetings.add(roomList.get(roomIndex).getMeetings().get(j).toString()+ " in " + roomList.get(roomIndex).toString());
@@ -243,6 +253,7 @@ public class Login2 extends Application {
 			
 		});
 		
+		//failed attempt to fix the gui
 		Pane buttonContainer = new Pane();
 
 		SplitPane content = new SplitPane();
