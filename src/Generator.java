@@ -9,7 +9,7 @@ public class Generator {
 		for(int i = 0; i<amount; i++){
 			result.add(new Room("Room 10"+i, makeMeetings(5), 30));
 		}
-		
+		result.add(new Room("Empty Room", makeMeetings(0), 50));
 		
 		
 		return result;

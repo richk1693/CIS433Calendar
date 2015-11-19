@@ -23,7 +23,6 @@ import javafx.scene.effect.Reflection;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -41,9 +40,7 @@ import javafx.stage.Stage;
 public class Login2 extends Application {
 
 	String user = "login";
-
 	String pw = "password";
-
 	String checkUser, checkPw;
 
 	public static void main(String[] args) {
@@ -152,11 +149,10 @@ public class Login2 extends Application {
 		// getClass().getClassLoader().getResource("login.css")
 		// .toExternalForm());
 
-		primaryStage.setScene(mainScene());
-		primaryStage.titleProperty().bind(
-		scene.widthProperty().asString().
-		concat(" : ").
-		concat(scene.heightProperty().asString()));
+		
+		//TODO: Change this from mainScene() to scene when done testing main scene.
+		primaryStage.setScene(scene);
+		
 
 		// primaryStage.setResizable(false);
 
@@ -165,36 +161,29 @@ public class Login2 extends Application {
 	}
 
 	public Scene mainScene() {
-
+		
+		//Create gui elements
 		ToggleGroup group = new ToggleGroup();
 		VBox vBox = new VBox(10);
 		Generator gen = new Generator();
 		ArrayList<Room> roomList = gen.makeRooms(5);
-		TextArea taDescription = new TextArea();
-
-		
-		
+		TextArea taDescription = new TextArea();		
 		ListView<String> meetingList = new ListView<String>();
-		ObservableList<String> items =FXCollections.observableArrayList (
-		    "Meeting1", "Meeting2", "Meeting5", "meeting4");
 		
+		//Populate the meeting list with an initial value
+		ObservableList<String> items =FXCollections.observableArrayList("No room Selected");
 		meetingList.setItems(items);
 
-		// vBox.getChildren().addAll(rbUS, rbUK, rbCA);
-		/*for (int i = 1; i < 5; i++) {
-			RadioButton rb = new RadioButton("Room " + i);
-			rb.setToggleGroup(group);
-			vBox.getChildren().add(rb);
-		}*/
-		
+	
+		//For each room create a radio button
 		for(int i = 0; i<roomList.size(); i++){
+			//Create a var for current room and create the button
 			Room currentRoom = roomList.get(i);
 			RadioButton rb = new RadioButton(currentRoom.toString());
 			rb.setToggleGroup(group);
 			
+			//When a button is clicked select the newest meeting
 			rb.setOnAction(e ->{
-
-					
 					ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
 					for(int j = 0; j<currentRoom.getMeetings().size(); j++){
 						updatedMeetings.add(currentRoom.getMeetings().get(j).toString()+ " in " + currentRoom.toString());
@@ -204,22 +193,19 @@ public class Login2 extends Application {
 				
 				
 			});
+			//Add the button to the box
 			vBox.getChildren().add(rb);
 		}
 
 		
-		
+		//Organize the current scene then return it
 		SplitPane content = new SplitPane();
-		content.setOrientation(Orientation.HORIZONTAL);
-		
-		
+		content.setOrientation(Orientation.HORIZONTAL);		
 		taDescription.setText("hi");
 		content.getItems().addAll(vBox, meetingList);
-		
 		SplitPane sp = new SplitPane();
 		sp.getItems().addAll(content, new ScrollPane(taDescription));
 		sp.setOrientation(Orientation.VERTICAL);
-
 		Scene scene = new Scene(sp, 600, 350);
 
 		return scene;
