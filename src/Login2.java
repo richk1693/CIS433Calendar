@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -166,10 +168,10 @@ public class Login2 extends Application {
 
 		ToggleGroup group = new ToggleGroup();
 		VBox vBox = new VBox(10);
+		Generator gen = new Generator();
+		ArrayList<Room> roomList = gen.makeRooms(5);
 
-		RadioButton rbUS = new RadioButton("Room 101");
-		RadioButton rbUK = new RadioButton("Room 102");
-		RadioButton rbCA = new RadioButton("Room 103");
+		
 		
 		ListView<String> meetingList = new ListView<String>();
 		ObservableList<String> items =FXCollections.observableArrayList (
@@ -178,8 +180,14 @@ public class Login2 extends Application {
 		meetingList.setItems(items);
 
 		// vBox.getChildren().addAll(rbUS, rbUK, rbCA);
-		for (int i = 1; i < 5; i++) {
+		/*for (int i = 1; i < 5; i++) {
 			RadioButton rb = new RadioButton("Room " + i);
+			rb.setToggleGroup(group);
+			vBox.getChildren().add(rb);
+		}*/
+		
+		for(int i = 0; i<roomList.size(); i++){
+			RadioButton rb = new RadioButton(roomList.get(i).toString());
 			rb.setToggleGroup(group);
 			vBox.getChildren().add(rb);
 		}

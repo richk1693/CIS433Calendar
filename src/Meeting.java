@@ -55,4 +55,10 @@ public class Meeting {
 		return true;
 	}
 	
+	public String toString(){
+		
+		return title;
+		
+	}
+	
 }
