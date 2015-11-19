@@ -16,6 +16,10 @@ public class Room {
 		return meetings;
 	}
 	
+	public void setMeetings(ArrayList<Meeting> meetings){
+		this.meetings = meetings;
+	}
+	
 	public String toString(){
 		return name;
 	}

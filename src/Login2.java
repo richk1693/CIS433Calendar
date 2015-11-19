@@ -23,6 +23,7 @@ import javafx.scene.effect.Reflection;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -30,11 +31,27 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-/**
+/* Features that need implemented
  * 
- *
- * 
- * @web http://zoranpavlovic.blogspot.com/
+Request a room of a given size for a period of time
+
+Request existing meeting be scheduled with start/end time
+
+Can't cancel meetings after the start time
+
+Create meetings. User provides list of attendees. email each attendee.
+
+Add or remove attendees
+
+Totally delete meeting. *Done*
+
+Email each attendee upon cancel. 
+
+If 0 attendees remove meeting occurances
+
+Employee interface
+
+post office package
  */
 
 public class Login2 extends Application {
@@ -151,7 +168,7 @@ public class Login2 extends Application {
 
 		
 		//TODO: Change this from mainScene() to scene when done testing main scene.
-		primaryStage.setScene(scene);
+		primaryStage.setScene(mainScene());
 		
 
 		// primaryStage.setResizable(false);
@@ -161,7 +178,8 @@ public class Login2 extends Application {
 	}
 
 	public Scene mainScene() {
-		
+		//variables
+
 		//Create gui elements
 		ToggleGroup group = new ToggleGroup();
 		VBox vBox = new VBox(10);
@@ -199,12 +217,40 @@ public class Login2 extends Application {
 
 		
 		//Organize the current scene then return it
+		
+		//Buttons
+		Button reserveRoom = new Button("reserve room");
+		Button deleteMeeting = new Button("delete meeting");
+		
+		deleteMeeting.setOnAction(e ->{
+			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
+			int roomIndex = -1;
+			//Find selected toggle
+			for(int i = 0; i< group.getToggles().size(); i++){
+				if(group.getToggles().get(i).isSelected()){
+					roomIndex = i;
+				}
+			}
+			
+			ArrayList<Meeting> currentList = roomList.get(roomIndex).getMeetings();
+			currentList.remove(meetingIndex);
+			roomList.get(roomIndex).setMeetings(currentList);
+			ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
+			for(int j = 0; j<roomList.get(roomIndex).getMeetings().size(); j++){
+				updatedMeetings.add(roomList.get(roomIndex).getMeetings().get(j).toString()+ " in " + roomList.get(roomIndex).toString());
+			}
+			meetingList.setItems(updatedMeetings);
+			
+		});
+		
+		Pane buttonContainer = new Pane();
+
 		SplitPane content = new SplitPane();
 		content.setOrientation(Orientation.HORIZONTAL);		
 		taDescription.setText("hi");
 		content.getItems().addAll(vBox, meetingList);
 		SplitPane sp = new SplitPane();
-		sp.getItems().addAll(content, new ScrollPane(taDescription));
+		sp.getItems().addAll(content, reserveRoom, deleteMeeting);
 		sp.setOrientation(Orientation.VERTICAL);
 		Scene scene = new Scene(sp, 600, 350);
 
