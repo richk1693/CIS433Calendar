@@ -170,12 +170,13 @@ public class Login2 extends Application {
 		VBox vBox = new VBox(10);
 		Generator gen = new Generator();
 		ArrayList<Room> roomList = gen.makeRooms(5);
+		TextArea taDescription = new TextArea();
 
 		
 		
 		ListView<String> meetingList = new ListView<String>();
 		ObservableList<String> items =FXCollections.observableArrayList (
-		    "Meeting1", "Meeting2", "Meeting3", "meeting4");
+		    "Meeting1", "Meeting2", "Meeting5", "meeting4");
 		
 		meetingList.setItems(items);
 
@@ -187,16 +188,31 @@ public class Login2 extends Application {
 		}*/
 		
 		for(int i = 0; i<roomList.size(); i++){
-			RadioButton rb = new RadioButton(roomList.get(i).toString());
+			Room currentRoom = roomList.get(i);
+			RadioButton rb = new RadioButton(currentRoom.toString());
 			rb.setToggleGroup(group);
+			
+			rb.setOnAction(e ->{
+
+					
+					ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
+					for(int j = 0; j<currentRoom.getMeetings().size(); j++){
+						updatedMeetings.add(currentRoom.getMeetings().get(j).toString()+ " in " + currentRoom.toString());
+					}
+					meetingList.setItems(updatedMeetings);
+					taDescription.setText("MUFFINSAAAAAAA");
+				
+				
+			});
 			vBox.getChildren().add(rb);
 		}
+
 		
 		
 		SplitPane content = new SplitPane();
 		content.setOrientation(Orientation.HORIZONTAL);
 		
-		TextArea taDescription = new TextArea();
+		
 		taDescription.setText("hi");
 		content.getItems().addAll(vBox, meetingList);
 		

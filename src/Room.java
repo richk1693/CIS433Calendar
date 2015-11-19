@@ -12,6 +12,10 @@ public class Room {
 		this.capacity = capacity;
 	}
 	
+	public ArrayList<Meeting> getMeetings(){
+		return meetings;
+	}
+	
 	public String toString(){
 		return name;
 	}
