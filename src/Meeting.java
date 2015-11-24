@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Date;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class Meeting {
 	
 	private String title;
@@ -43,12 +46,29 @@ public class Meeting {
 	public String getTitle(){
 		return title;
 	}
+	public ArrayList<Person> getPeople(){
+		return attendeeList;
+	}
+	public ObservableList<String> getPeopleObservable(){
+		ObservableList<String> list = FXCollections.observableArrayList();
+		for(int i = 0; i < attendeeList.size(); i++){
+			list.add(attendeeList.get(i).toString());
+		}
+		
+		
+		return list;
+		
+	}
 	
 	
 	
 	//setters
 	public void setTitle(String title){
 		this.title = title;
+	}
+	
+	public void setPeople(ArrayList<Person> people){
+		this.attendeeList = people;
 	}
 	
 	//Returns true or false for if the meeting times overlap. Can be cleaned up if feeling brave. 

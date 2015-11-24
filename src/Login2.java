@@ -192,7 +192,7 @@ public class Login2 extends Application {
 			rb.setOnAction(e ->{
 					ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
 					for(int j = 0; j<currentRoom.getMeetings().size(); j++){
-						updatedMeetings.add(currentRoom.getMeetings().get(j).toString()+ " in " + currentRoom.toString());
+						updatedMeetings.add(currentRoom.getMeetings().get(j).toString());
 					}
 					meetingList.setItems(updatedMeetings);
 					
@@ -247,7 +247,7 @@ public class Login2 extends Application {
 			//Update the list of meetings gui (the same as on click for radio buttons)
 			ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
 			for(int j = 0; j<mainRoomList.get(roomIndex).getMeetings().size(); j++){
-				updatedMeetings.add(mainRoomList.get(roomIndex).getMeetings().get(j).toString()+ " in " + mainRoomList.get(roomIndex).toString());
+				updatedMeetings.add(mainRoomList.get(roomIndex).getMeetings().get(j).toString());
 			}
 			meetingList.setItems(updatedMeetings);
 			
@@ -311,26 +311,82 @@ public class Login2 extends Application {
 		final TextField txtTitle = new TextField();
 		Label lblStart = new Label("Start Date");
 		final TextField txtStart = new TextField();
-		Button btnLogin = new Button("Cancel");
-		final Label lblMessage = new Label();
-
+		Label lblEnd = new Label("End Date");
+		final TextField txtEnd = new TextField();
+		Button btnSave = new Button("Save");
+		ListView attendeeList = new ListView();
+		Label lblName = new Label("Name");
+		final TextField txtName = new TextField();
+		Label lblEmail = new Label("Email");
+		final TextField txtEmail = new TextField();
+		Label lblJob = new Label("Job");
+		final TextField txtJob = new TextField();
+		Button btnDelete = new Button("Delete Person");
+		Button btnAdd = new Button("Add Person");
+		
+		
 		
 		//Populate the fields with values
 		txtTitle.setText(meeting.getTitle());
 		txtStart.setText(meeting.getStartDate().toString());
+		txtEnd.setText(meeting.getEndDate().toString());
+		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
+		attendeeList.setItems(toObserveable(peopleList));
+
+		
 		
 		// Adding Nodes to GridPane layout
 		gridPane.add(lblTitle, 0, 0);
 		gridPane.add(txtTitle, 1, 0);
 		gridPane.add(lblStart, 0, 1);
 		gridPane.add(txtStart, 1, 1);
-		gridPane.add(btnLogin, 2, 1);
-		gridPane.add(lblMessage, 1, 2);
+		gridPane.add(lblEnd, 0, 2);
+		gridPane.add(txtEnd, 1, 2);
+		gridPane.add(attendeeList, 1,3);
+		gridPane.add(lblName, 0, 9);
+		gridPane.add(txtName, 1, 9);
+		gridPane.add(lblEmail, 0, 10);
+		gridPane.add(txtEmail, 1, 10);
+		gridPane.add(lblJob, 0, 11);
+		gridPane.add(txtJob, 1, 11);
+		gridPane.add(btnAdd, 0, 12);
+		gridPane.add(btnDelete, 1, 12);
+		gridPane.add(btnSave, 1, 20);
 
 
-
+		
+		// Action for selecting a person
+		attendeeList.setOnMouseClicked(e ->{
+			int index = attendeeList.getSelectionModel().getSelectedIndex();
+			txtName.setText(peopleList.get(index).getName());
+			txtEmail.setText(peopleList.get(index).getEmail());
+			txtJob.setText(peopleList.get(index).getRole());
+		});
+		//Action for adding a person
+		btnAdd.setOnAction(e ->{
+			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
+			result.add(new Person(txtName.getText(), txtEmail.getText(), txtJob.getText()));
+			attendeeList.setItems(toObserveable(result));
+			
+			txtName.setText("");
+			txtEmail.setText("");
+			txtJob.setText("");
+		});
+		
+		
+		btnDelete.setOnAction(e ->{
+			int index = attendeeList.getSelectionModel().getSelectedIndex();
+			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
+			result.remove(index);
+			attendeeList.setItems(toObserveable(result));
+			
+			txtName.setText("");
+			txtEmail.setText("");
+			txtJob.setText("");
+		});
+		
 		// Action for btnLogin
-		btnLogin.setOnAction(new EventHandler<ActionEvent>() {
+		btnSave.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				meeting.setTitle(txtTitle.getText());
@@ -349,5 +405,14 @@ public class Login2 extends Application {
 		// .toExternalForm());
 		
 		return scene;
+	}
+	
+	public ObservableList<String> toObserveable(ArrayList a){
+		ObservableList list = FXCollections.observableArrayList();
+		for(int i = 0; i<a.size(); i++){
+			list.add(a.get(i).toString());
+		}
+		
+		return list;
 	}
 }

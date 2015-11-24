@@ -15,6 +15,7 @@ public class Generator {
 	}
 
 	public ArrayList<Meeting> makeMeetings(int amount) {
+		if(amount == 0) return new ArrayList<Meeting>();
 		ArrayList<Meeting> result = new ArrayList<Meeting>();
 		Date today = new Date();
 		int oneDay = 24 * 60 * 60 * 1000;
