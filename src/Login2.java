@@ -209,11 +209,33 @@ public class Login2 extends Application {
 		// Organize the current scene then return it
 
 		// Buttons
-		Button reserveRoom = new Button("reserve room");
-		Button deleteMeeting = new Button("delete meeting");
+		Button reserveRoom = new Button("Reserve Room");
+		Button deleteMeeting = new Button("Delete Meeting");
 		Button editMeeting = new Button("Edit Meeting");
 		Button createMeeting = new Button("Create Meeting");
+		Button refresh = new Button("Refresh");
+		Button scheduleMeeting = new Button("Schedule Meeting");
 
+		
+		refresh.setOnAction(e ->{
+			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
+			int roomIndex = -1;
+			// Go through each thing in the toggle group and find the selected
+			// radio button.
+			// There literally HAS TO be an easy way to do this but I can't find
+			// it so i wrote it myself
+			for (int i = 0; i < group.getToggles().size(); i++) {
+				if (group.getToggles().get(i).isSelected()) {
+					roomIndex = i;
+				}
+			}
+
+			// Create a var holding the list of meetings for the selected room
+			ArrayList<Meeting> currentList = mainRoomList.get(roomIndex).getMeetings();
+			
+			meetingList.setItems(toObserveable(currentList));
+			
+		});
 		// On click event for the meeting
 		deleteMeeting.setOnAction(e -> {
 
@@ -259,6 +281,7 @@ public class Login2 extends Application {
 
 		});
 
+		//Action for editing a meeting
 		editMeeting.setOnAction(e -> {
 			int roomIndex = -1;
 			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
@@ -274,14 +297,25 @@ public class Login2 extends Application {
 			stage.show();
 
 		});
+		
+		//Action for creating a meeting
+		createMeeting.setOnAction(e -> {
+			
+			Stage stage = new Stage();
+			stage.setScene(editScene(0, 0, false));
+			stage.show();
 
-		// failed attempt to fix the gui
+		});
+
+
 		GridPane buttonContainer = new GridPane();
 		
 		buttonContainer.add(deleteMeeting, 0,0);
 		buttonContainer.add(editMeeting, 1, 0);
 		buttonContainer.add(createMeeting, 2, 0);
 		buttonContainer.add(reserveRoom, 3, 0);
+		buttonContainer.add(scheduleMeeting, 4, 0);
+		buttonContainer.add(refresh, 0, 1);
 		SplitPane content = new SplitPane();
 		content.setOrientation(Orientation.HORIZONTAL);
 		taDescription.setText("hi");
@@ -300,6 +334,11 @@ public class Login2 extends Application {
 		Meeting meeting = mainRoomList.get(rIndex).meetings.get(mIndex);
 		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
 		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
+		
+		//if not editing (creating new) don't load any people
+		if(!editing)
+			peopleList.clear();
+		
 
 		BorderPane bp = new BorderPane();
 		bp.setPadding(new Insets(10, 50, 50, 50));
@@ -368,13 +407,15 @@ public class Login2 extends Application {
 		});
 		// Action for adding a person
 		btnAdd.setOnAction(e -> {
-			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
-			result.add(new Person(txtName.getText(), txtEmail.getText(), txtJob.getText()));
-			attendeeList.setItems(toObserveable(result));
-			mainRoomList.get(rIndex).getMeetings().get(mIndex).setPeople(result);
-			txtName.setText("");
-			txtEmail.setText("");
-			txtJob.setText("");
+
+				ArrayList<Person> result = peopleList;			
+				result.add(new Person(txtName.getText(), txtEmail.getText(), txtJob.getText()));
+				attendeeList.setItems(toObserveable(result));
+				mainRoomList.get(rIndex).getMeetings().get(mIndex).setPeople(result);
+				txtName.setText("");
+				txtEmail.setText("");
+				txtJob.setText("");
+			
 		});
 
 		// Action for deleting person
@@ -399,7 +440,12 @@ public class Login2 extends Application {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-				mainRoomList.get(rIndex).getMeetings().set(mIndex, meeting);
+				if(editing){
+					mainRoomList.get(rIndex).getMeetings().set(mIndex, meeting);
+				}
+				else{
+					mainMeetingList.add(meeting);
+				}
 			}
 		});
 
