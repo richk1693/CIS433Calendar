@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Date;
-
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -35,23 +33,14 @@ import javafx.stage.Stage;
 /* Features that need implemented
  
 Request a room of a given size for a period of time
-
 Request existing meeting be scheduled with start/end time
-
-Can't cancel meetings after the start time
-
-Create meetings. User provides list of attendees. email each attendee.
-
+*****Can't cancel meetings after the start time *DONE*\
+Create meetings. User provides list of attendees. email each attendee
 Add or remove attendees
-
-Totally delete meeting. *Done*
-
+******Totally delete meeting. *DONE*
 Email each attendee upon cancel. 
-
 If 0 attendees remove meeting occurrences
-
 Employee interface
-
 post office package
  */
 
@@ -126,11 +115,9 @@ public class Login2 extends Application {
 
 		// Action for btnLogin
 		btnLogin.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent arg0) {
 				checkUser = txtUserName.getText().toString();
-
 				checkPw = pf.getText().toString();
 
 				if (checkUser.equals(user) && checkPw.equals(pw)) {
@@ -144,13 +131,11 @@ public class Login2 extends Application {
 				else {
 
 					lblMessage.setText("Incorrect user or pw.");
-
 					lblMessage.setTextFill(Color.RED);
 
 				}
 
 				txtUserName.setText("");
-
 				pf.setText("");
 
 			}
@@ -173,7 +158,6 @@ public class Login2 extends Application {
 		
 
 		// primaryStage.setResizable(false);
-
 		primaryStage.show();
 
 	}
@@ -241,8 +225,11 @@ public class Login2 extends Application {
 			//Create a var holding the list of meetings for the selected room
 			ArrayList<Meeting> currentList = roomList.get(roomIndex).getMeetings();
 			//Remove the selected meeting
-			if(currentList.get(roomIndex).getStartDate().before(new Date())){
-				System.out.println("This is not a valid day");
+			if(currentList.get(meetingIndex).getStartDate().before(new Date(System.currentTimeMillis()))){
+				
+				System.out.println(currentList.get(meetingIndex).toString());
+				System.out.println("Meeting Started " + currentList.get(roomIndex).getStartDate());
+				System.out.println("This is not a valid delete");
 				return;
 			}
 			currentList.remove(meetingIndex);

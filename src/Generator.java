@@ -24,8 +24,8 @@ public class Generator {
 		result.add(new Meeting("Yesterday Meeting", makePeople(5), new Date(System.currentTimeMillis()-(oneDay)), new Date(System.currentTimeMillis()-(oneDay))));
 		for(int i = 0; i<amount; i++){
 			
-			Date start = new Date(System.currentTimeMillis()-(oneDay*i));
-			Date end = new Date(System.currentTimeMillis()-(oneDay*i)+oneDay);
+			Date start = new Date(System.currentTimeMillis()+(oneDay*i));
+			Date end = new Date(System.currentTimeMillis()+(oneDay*i)+oneDay);
 			result.add(new Meeting("Meeting"+i, makePeople(5), start, end));
 		}
 		
