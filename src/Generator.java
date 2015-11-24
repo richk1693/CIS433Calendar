@@ -21,6 +21,7 @@ public class Generator {
 		Date today = new Date();
 		int oneDay = 24*60*60*1000;
 		
+		result.add(new Meeting("Yesterday Meeting", makePeople(5), new Date(System.currentTimeMillis()-(oneDay)), new Date(System.currentTimeMillis()-(oneDay))));
 		for(int i = 0; i<amount; i++){
 			
 			Date start = new Date(System.currentTimeMillis()-(oneDay*i));

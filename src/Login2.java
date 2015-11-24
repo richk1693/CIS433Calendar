@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -240,6 +241,10 @@ public class Login2 extends Application {
 			//Create a var holding the list of meetings for the selected room
 			ArrayList<Meeting> currentList = roomList.get(roomIndex).getMeetings();
 			//Remove the selected meeting
+			if(currentList.get(roomIndex).getStartDate().before(new Date())){
+				System.out.println("This is not a valid day");
+				return;
+			}
 			currentList.remove(meetingIndex);
 			//Add the new meeting list back to the room.
 			roomList.get(roomIndex).setMeetings(currentList);
