@@ -1,3 +1,5 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import javafx.application.Application;
@@ -327,9 +329,10 @@ public class Login2 extends Application {
 		
 		
 		//Populate the fields with values
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
 		txtTitle.setText(meeting.getTitle());
-		txtStart.setText(meeting.getStartDate().toString());
-		txtEnd.setText(meeting.getEndDate().toString());
+		txtStart.setText(format.format(meeting.getStartDate()));
+		txtEnd.setText(format.format(meeting.getEndDate()));
 		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
 		attendeeList.setItems(toObserveable(peopleList));
 
@@ -342,15 +345,15 @@ public class Login2 extends Application {
 		gridPane.add(txtStart, 1, 1);
 		gridPane.add(lblEnd, 0, 2);
 		gridPane.add(txtEnd, 1, 2);
-		gridPane.add(attendeeList, 1,3);
-		gridPane.add(lblName, 0, 9);
-		gridPane.add(txtName, 1, 9);
-		gridPane.add(lblEmail, 0, 10);
-		gridPane.add(txtEmail, 1, 10);
-		gridPane.add(lblJob, 0, 11);
-		gridPane.add(txtJob, 1, 11);
-		gridPane.add(btnAdd, 0, 12);
-		gridPane.add(btnDelete, 1, 12);
+		gridPane.add(attendeeList, 1,6);
+		gridPane.add(lblName, 0, 8);
+		gridPane.add(txtName, 1, 8);
+		gridPane.add(lblEmail, 0, 9);
+		gridPane.add(txtEmail, 1, 9);
+		gridPane.add(lblJob, 0, 10);
+		gridPane.add(txtJob, 1, 10);
+		gridPane.add(btnAdd, 0, 11);
+		gridPane.add(btnDelete, 1, 11);
 		gridPane.add(btnSave, 1, 20);
 
 
@@ -367,29 +370,34 @@ public class Login2 extends Application {
 			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
 			result.add(new Person(txtName.getText(), txtEmail.getText(), txtJob.getText()));
 			attendeeList.setItems(toObserveable(result));
-			
+			mainRoomList.get(rIndex).getMeetings().get(mIndex).setPeople(result);
 			txtName.setText("");
 			txtEmail.setText("");
 			txtJob.setText("");
 		});
 		
-		
+		//Action for deleting person
 		btnDelete.setOnAction(e ->{
 			int index = attendeeList.getSelectionModel().getSelectedIndex();
 			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
-			result.remove(index);
+			mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople().remove(index);
 			attendeeList.setItems(toObserveable(result));
-			
 			txtName.setText("");
 			txtEmail.setText("");
 			txtJob.setText("");
 		});
 		
-		// Action for btnLogin
+		// Action for saving changes
 		btnSave.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				meeting.setTitle(txtTitle.getText());
+				try {
+					meeting.setStartDate(format.parse(txtStart.getText()));
+					meeting.setEndDate(format.parse(txtEnd.getText()));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 				mainRoomList.get(rIndex).getMeetings().set(mIndex, meeting);
 			}
 		});

@@ -71,6 +71,14 @@ public class Meeting {
 		this.attendeeList = people;
 	}
 	
+	public void setStartDate(Date d){
+		this.startDate = d;
+	}
+	
+	public void setEndDate(Date d){
+		this.endDate = d;
+	}
+	
 	//Returns true or false for if the meeting times overlap. Can be cleaned up if feeling brave. 
 	public boolean overlaps(Meeting m){
 		
