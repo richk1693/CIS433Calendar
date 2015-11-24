@@ -81,15 +81,19 @@ public class Meeting {
 	
 	//Returns true or false for if the meeting times overlap. Can be cleaned up if feeling brave. 
 	public boolean overlaps(Meeting m){
-		
 		//meeting is before
 		if (m.getEndDate().before(startDate) && m.getStartDate().before(startDate))
 			return false;
 		//Meeting is after
 		if (m.getEndDate().after(startDate) && m.getStartDate().after(startDate))
 			return false;
-		
 		return true;
+	}
+	
+	public void notifyAttendees(String s){
+		for(int i =0; i< attendeeList.size(); i++){
+			attendeeList.get(i).sendEmail(s);
+		}
 	}
 	
 	public String toString(){

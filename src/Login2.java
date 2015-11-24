@@ -39,9 +39,9 @@ Request existing meeting be scheduled with start/end time
 *****Can't cancel meetings after the start time *DONE*\
 ?No modify after start time
 Create meetings. User provides list of attendees. email each attendee
-Add or remove attendees
+********Add or remove attendees *DONE*
 ******Totally delete meeting. *DONE*
-Email each attendee upon cancel. 
+******Email each attendee upon cancel. *DONE*
 If 0 attendees remove meeting occurrences
 Employee interface
 post office package
@@ -53,9 +53,10 @@ public class Login2 extends Application {
 	String pw = "password";
 	String checkUser, checkPw;
 	static Generator gen = new Generator();
-	//Gods of programming please forgive me for this sin
+	// Gods of programming please forgive me for this sin
 
 	public static ArrayList<Room> mainRoomList = gen.makeRooms(5);
+	public static ArrayList<Meeting> mainMeetingList = new ArrayList<Meeting>();
 
 	public static void main(String[] args) {
 
@@ -64,11 +65,11 @@ public class Login2 extends Application {
 	}
 
 	public void start(Stage primaryStage) {
-		
+
 		primaryStage.setTitle("433 Calendar Login");
 		BorderPane bp = new BorderPane();
 		bp.setPadding(new Insets(10, 50, 50, 50));
-		
+
 		// Adding HBox
 		HBox hb = new HBox();
 		hb.setPadding(new Insets(20, 20, 20, 30));
@@ -158,10 +159,9 @@ public class Login2 extends Application {
 		// getClass().getClassLoader().getResource("login.css")
 		// .toExternalForm());
 
-		
-		//TODO: Change this from mainScene() to scene when done testing main scene.
+		// TODO: Change this from mainScene() to scene when done testing main
+		// scene.
 		primaryStage.setScene(mainScene());
-		
 
 		// primaryStage.setResizable(false);
 		primaryStage.show();
@@ -170,118 +170,124 @@ public class Login2 extends Application {
 
 	public Scene mainScene() {
 
-		//Create gui elements
+		// Create gui elements
 		ToggleGroup group = new ToggleGroup();
 		VBox vBox = new VBox(10);
 		Generator gen = new Generator();
-		
-		TextArea taDescription = new TextArea();		
+
+		TextArea taDescription = new TextArea();
 		ListView<String> meetingList = new ListView<String>();
-		
-		//Populate the meeting list with an initial value
-		ObservableList<String> items =FXCollections.observableArrayList("No Room Selected");
+
+		// Populate the meeting list with an initial value
+		ObservableList<String> items = FXCollections.observableArrayList("No Room Selected");
 		meetingList.setItems(items);
 
-	
-		//For each room create a radio button
-		for(int i = 0; i<mainRoomList.size(); i++){
-			//Create a var for current room and create the button
+		// For each room create a radio button
+		for (int i = 0; i < mainRoomList.size(); i++) {
+			// Create a var for current room and create the button
 			Room currentRoom = mainRoomList.get(i);
 			RadioButton rb = new RadioButton(currentRoom.toString());
 			rb.setToggleGroup(group);
-			
-			//When a button is clicked select the newest meeting
-			rb.setOnAction(e ->{
-					ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
-					for(int j = 0; j<currentRoom.getMeetings().size(); j++){
-						updatedMeetings.add(currentRoom.getMeetings().get(j).toString());
-					}
-					meetingList.setItems(updatedMeetings);
-					
-					//I guess i'll leave this in for now since it's everyone's favorite line
-					taDescription.setText("MUFFINSAAAAAAA");
-				
-				
+
+			// When a button is clicked select the newest meeting
+			rb.setOnAction(e -> {
+				ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
+				for (int j = 0; j < currentRoom.getMeetings().size(); j++) {
+					updatedMeetings.add(currentRoom.getMeetings().get(j).toString());
+				}
+				meetingList.setItems(updatedMeetings);
+
+				// I guess i'll leave this in for now since it's everyone's
+				// favorite line
+				taDescription.setText("MUFFINSAAAAAAA");
+
 			});
-			//Add the button to the box
+			// Add the button to the box
 			vBox.getChildren().add(rb);
 		}
 
-		
-		//Organize the current scene then return it
-		
-		//Buttons
+		// Organize the current scene then return it
+
+		// Buttons
 		Button reserveRoom = new Button("reserve room");
 		Button deleteMeeting = new Button("delete meeting");
 		Button editMeeting = new Button("Edit Meeting");
-		
-		//On click event for the meeting
-		deleteMeeting.setOnAction(e ->{
-			
-			//Get the index of the currently selected meeting and room
+		Button createMeeting = new Button("Create Meeting");
+
+		// On click event for the meeting
+		deleteMeeting.setOnAction(e -> {
+
+			// Get the index of the currently selected meeting and room
 			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
 			int roomIndex = -1;
-			//Go through each thing in the toggle group and find the selected radio button.
-			//There literally HAS TO be an easy way to do this but I can't find it so i wrote it myself
-			for(int i = 0; i< group.getToggles().size(); i++){
-				if(group.getToggles().get(i).isSelected()){
+			// Go through each thing in the toggle group and find the selected
+			// radio button.
+			// There literally HAS TO be an easy way to do this but I can't find
+			// it so i wrote it myself
+			for (int i = 0; i < group.getToggles().size(); i++) {
+				if (group.getToggles().get(i).isSelected()) {
 					roomIndex = i;
 				}
 			}
-			
-			//Create a var holding the list of meetings for the selected room
+
+			// Create a var holding the list of meetings for the selected room
 			ArrayList<Meeting> currentList = mainRoomList.get(roomIndex).getMeetings();
-			
-			//If the meeting has already started you can't delete it
-			if(currentList.get(meetingIndex).getStartDate().before(new Date(System.currentTimeMillis()))){
-				
+
+			// If the meeting has already started you can't delete it
+			if (currentList.get(meetingIndex).getStartDate().before(new Date(System.currentTimeMillis()))) {
+
 				System.out.println(currentList.get(meetingIndex).toString());
 				System.out.println("Meeting Started " + currentList.get(roomIndex).getStartDate());
 				System.out.println("This is not a valid delete");
 				return;
 			}
-			
-			//Remove the selected meeting
+
+			// Remove the selected meeting and notify attendees
+			currentList.get(meetingIndex).notifyAttendees("Your meeting has been canceled!");
 			currentList.remove(meetingIndex);
-			//Add the new meeting list back to the room.
+
+			// Add the new meeting list back to the room.
 			mainRoomList.get(roomIndex).setMeetings(currentList);
-			
-			//Update the list of meetings gui (the same as on click for radio buttons)
+
+			// Update the list of meetings gui (the same as on click for radio
+			// buttons)
 			ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
-			for(int j = 0; j<mainRoomList.get(roomIndex).getMeetings().size(); j++){
+			for (int j = 0; j < mainRoomList.get(roomIndex).getMeetings().size(); j++) {
 				updatedMeetings.add(mainRoomList.get(roomIndex).getMeetings().get(j).toString());
 			}
 			meetingList.setItems(updatedMeetings);
-			
+
 		});
-		
-		
-		editMeeting.setOnAction(e->{
+
+		editMeeting.setOnAction(e -> {
 			int roomIndex = -1;
 			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
-			
-			for(int i = 0; i< group.getToggles().size(); i++){
-				if(group.getToggles().get(i).isSelected()){
+
+			for (int i = 0; i < group.getToggles().size(); i++) {
+				if (group.getToggles().get(i).isSelected()) {
 					roomIndex = i;
 				}
 			}
 
 			Stage stage = new Stage();
-			stage.setScene(editScene(roomIndex, meetingIndex));
+			stage.setScene(editScene(roomIndex, meetingIndex, true));
 			stage.show();
-			
-		});
-		
-		
-		//failed attempt to fix the gui
-		Pane buttonContainer = new Pane();
 
+		});
+
+		// failed attempt to fix the gui
+		GridPane buttonContainer = new GridPane();
+		
+		buttonContainer.add(deleteMeeting, 0,0);
+		buttonContainer.add(editMeeting, 1, 0);
+		buttonContainer.add(createMeeting, 2, 0);
+		buttonContainer.add(reserveRoom, 3, 0);
 		SplitPane content = new SplitPane();
-		content.setOrientation(Orientation.HORIZONTAL);		
+		content.setOrientation(Orientation.HORIZONTAL);
 		taDescription.setText("hi");
 		content.getItems().addAll(vBox, meetingList);
 		SplitPane sp = new SplitPane();
-		sp.getItems().addAll(content, reserveRoom, deleteMeeting, editMeeting);
+		sp.getItems().addAll(content, buttonContainer);
 		sp.setOrientation(Orientation.VERTICAL);
 		Scene scene = new Scene(sp, 600, 350);
 
@@ -289,15 +295,15 @@ public class Login2 extends Application {
 
 	}
 
-	
-	public Scene editScene(int rIndex, int mIndex){
-		
+	public Scene editScene(int rIndex, int mIndex, boolean editing) {
+
 		Meeting meeting = mainRoomList.get(rIndex).meetings.get(mIndex);
-		
-		
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
+		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
+
 		BorderPane bp = new BorderPane();
 		bp.setPadding(new Insets(10, 50, 50, 50));
-		
+
 		// Adding HBox
 		HBox hb = new HBox();
 		hb.setPadding(new Insets(20, 20, 20, 30));
@@ -325,19 +331,16 @@ public class Login2 extends Application {
 		final TextField txtJob = new TextField();
 		Button btnDelete = new Button("Delete Person");
 		Button btnAdd = new Button("Add Person");
-		
-		
-		
-		//Populate the fields with values
-		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
-		txtTitle.setText(meeting.getTitle());
-		txtStart.setText(format.format(meeting.getStartDate()));
-		txtEnd.setText(format.format(meeting.getEndDate()));
-		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
-		attendeeList.setItems(toObserveable(peopleList));
 
-		
-		
+		// Populate the fields with values
+		if (editing) {
+			
+			txtTitle.setText(meeting.getTitle());
+			txtStart.setText(format.format(meeting.getStartDate()));
+			txtEnd.setText(format.format(meeting.getEndDate()));
+			attendeeList.setItems(toObserveable(peopleList));
+		}
+
 		// Adding Nodes to GridPane layout
 		gridPane.add(lblTitle, 0, 0);
 		gridPane.add(txtTitle, 1, 0);
@@ -345,7 +348,7 @@ public class Login2 extends Application {
 		gridPane.add(txtStart, 1, 1);
 		gridPane.add(lblEnd, 0, 2);
 		gridPane.add(txtEnd, 1, 2);
-		gridPane.add(attendeeList, 1,6);
+		gridPane.add(attendeeList, 1, 6);
 		gridPane.add(lblName, 0, 8);
 		gridPane.add(txtName, 1, 8);
 		gridPane.add(lblEmail, 0, 9);
@@ -356,17 +359,15 @@ public class Login2 extends Application {
 		gridPane.add(btnDelete, 1, 11);
 		gridPane.add(btnSave, 1, 20);
 
-
-		
 		// Action for selecting a person
-		attendeeList.setOnMouseClicked(e ->{
+		attendeeList.setOnMouseClicked(e -> {
 			int index = attendeeList.getSelectionModel().getSelectedIndex();
 			txtName.setText(peopleList.get(index).getName());
 			txtEmail.setText(peopleList.get(index).getEmail());
 			txtJob.setText(peopleList.get(index).getRole());
 		});
-		//Action for adding a person
-		btnAdd.setOnAction(e ->{
+		// Action for adding a person
+		btnAdd.setOnAction(e -> {
 			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
 			result.add(new Person(txtName.getText(), txtEmail.getText(), txtJob.getText()));
 			attendeeList.setItems(toObserveable(result));
@@ -375,9 +376,9 @@ public class Login2 extends Application {
 			txtEmail.setText("");
 			txtJob.setText("");
 		});
-		
-		//Action for deleting person
-		btnDelete.setOnAction(e ->{
+
+		// Action for deleting person
+		btnDelete.setOnAction(e -> {
 			int index = attendeeList.getSelectionModel().getSelectedIndex();
 			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
 			mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople().remove(index);
@@ -386,7 +387,7 @@ public class Login2 extends Application {
 			txtEmail.setText("");
 			txtJob.setText("");
 		});
-		
+
 		// Action for saving changes
 		btnSave.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -411,16 +412,16 @@ public class Login2 extends Application {
 		// scene.getStylesheets().add(
 		// getClass().getClassLoader().getResource("login.css")
 		// .toExternalForm());
-		
+
 		return scene;
 	}
-	
-	public ObservableList<String> toObserveable(ArrayList a){
+
+	public ObservableList<String> toObserveable(ArrayList a) {
 		ObservableList list = FXCollections.observableArrayList();
-		for(int i = 0; i<a.size(); i++){
+		for (int i = 0; i < a.size(); i++) {
 			list.add(a.get(i).toString());
 		}
-		
+
 		return list;
 	}
 }
