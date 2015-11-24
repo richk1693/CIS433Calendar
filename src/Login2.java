@@ -35,6 +35,7 @@ import javafx.stage.Stage;
 Request a room of a given size for a period of time
 Request existing meeting be scheduled with start/end time
 *****Can't cancel meetings after the start time *DONE*\
+?No modify after start time
 Create meetings. User provides list of attendees. email each attendee
 Add or remove attendees
 ******Totally delete meeting. *DONE*
@@ -49,6 +50,10 @@ public class Login2 extends Application {
 	String user = "login";
 	String pw = "password";
 	String checkUser, checkPw;
+	static Generator gen = new Generator();
+	//Gods of programming please forgive me for this sin
+
+	public static ArrayList<Room> mainRoomList = gen.makeRooms(5);
 
 	public static void main(String[] args) {
 
@@ -56,9 +61,8 @@ public class Login2 extends Application {
 
 	}
 
-	@Override
 	public void start(Stage primaryStage) {
-
+		
 		primaryStage.setTitle("433 Calendar Login");
 		BorderPane bp = new BorderPane();
 		bp.setPadding(new Insets(10, 50, 50, 50));
@@ -168,19 +172,19 @@ public class Login2 extends Application {
 		ToggleGroup group = new ToggleGroup();
 		VBox vBox = new VBox(10);
 		Generator gen = new Generator();
-		ArrayList<Room> roomList = gen.makeRooms(5);
+		
 		TextArea taDescription = new TextArea();		
 		ListView<String> meetingList = new ListView<String>();
 		
 		//Populate the meeting list with an initial value
-		ObservableList<String> items =FXCollections.observableArrayList("No room Selected");
+		ObservableList<String> items =FXCollections.observableArrayList("No Room Selected");
 		meetingList.setItems(items);
 
 	
 		//For each room create a radio button
-		for(int i = 0; i<roomList.size(); i++){
+		for(int i = 0; i<mainRoomList.size(); i++){
 			//Create a var for current room and create the button
-			Room currentRoom = roomList.get(i);
+			Room currentRoom = mainRoomList.get(i);
 			RadioButton rb = new RadioButton(currentRoom.toString());
 			rb.setToggleGroup(group);
 			
@@ -207,6 +211,7 @@ public class Login2 extends Application {
 		//Buttons
 		Button reserveRoom = new Button("reserve room");
 		Button deleteMeeting = new Button("delete meeting");
+		Button editMeeting = new Button("Edit Meeting");
 		
 		//On click event for the meeting
 		deleteMeeting.setOnAction(e ->{
@@ -223,8 +228,9 @@ public class Login2 extends Application {
 			}
 			
 			//Create a var holding the list of meetings for the selected room
-			ArrayList<Meeting> currentList = roomList.get(roomIndex).getMeetings();
-			//Remove the selected meeting
+			ArrayList<Meeting> currentList = mainRoomList.get(roomIndex).getMeetings();
+			
+			//If the meeting has already started you can't delete it
 			if(currentList.get(meetingIndex).getStartDate().before(new Date(System.currentTimeMillis()))){
 				
 				System.out.println(currentList.get(meetingIndex).toString());
@@ -232,18 +238,38 @@ public class Login2 extends Application {
 				System.out.println("This is not a valid delete");
 				return;
 			}
+			
+			//Remove the selected meeting
 			currentList.remove(meetingIndex);
 			//Add the new meeting list back to the room.
-			roomList.get(roomIndex).setMeetings(currentList);
+			mainRoomList.get(roomIndex).setMeetings(currentList);
 			
 			//Update the list of meetings gui (the same as on click for radio buttons)
 			ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
-			for(int j = 0; j<roomList.get(roomIndex).getMeetings().size(); j++){
-				updatedMeetings.add(roomList.get(roomIndex).getMeetings().get(j).toString()+ " in " + roomList.get(roomIndex).toString());
+			for(int j = 0; j<mainRoomList.get(roomIndex).getMeetings().size(); j++){
+				updatedMeetings.add(mainRoomList.get(roomIndex).getMeetings().get(j).toString()+ " in " + mainRoomList.get(roomIndex).toString());
 			}
 			meetingList.setItems(updatedMeetings);
 			
 		});
+		
+		
+		editMeeting.setOnAction(e->{
+			int roomIndex = -1;
+			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
+			
+			for(int i = 0; i< group.getToggles().size(); i++){
+				if(group.getToggles().get(i).isSelected()){
+					roomIndex = i;
+				}
+			}
+
+			Stage stage = new Stage();
+			stage.setScene(editScene(roomIndex, meetingIndex));
+			stage.show();
+			
+		});
+		
 		
 		//failed attempt to fix the gui
 		Pane buttonContainer = new Pane();
@@ -253,7 +279,7 @@ public class Login2 extends Application {
 		taDescription.setText("hi");
 		content.getItems().addAll(vBox, meetingList);
 		SplitPane sp = new SplitPane();
-		sp.getItems().addAll(content, reserveRoom, deleteMeeting);
+		sp.getItems().addAll(content, reserveRoom, deleteMeeting, editMeeting);
 		sp.setOrientation(Orientation.VERTICAL);
 		Scene scene = new Scene(sp, 600, 350);
 
@@ -261,4 +287,67 @@ public class Login2 extends Application {
 
 	}
 
+	
+	public Scene editScene(int rIndex, int mIndex){
+		
+		Meeting meeting = mainRoomList.get(rIndex).meetings.get(mIndex);
+		
+		
+		BorderPane bp = new BorderPane();
+		bp.setPadding(new Insets(10, 50, 50, 50));
+		
+		// Adding HBox
+		HBox hb = new HBox();
+		hb.setPadding(new Insets(20, 20, 20, 30));
+
+		// Adding GridPane
+		GridPane gridPane = new GridPane();
+		gridPane.setPadding(new Insets(20, 20, 20, 20));
+		gridPane.setHgap(5);
+		gridPane.setVgap(5);
+
+		// Implementing Nodes for GridPane
+		Label lblTitle = new Label("Meeting Title");
+		final TextField txtTitle = new TextField();
+		Label lblStart = new Label("Start Date");
+		final TextField txtStart = new TextField();
+		Button btnLogin = new Button("Cancel");
+		final Label lblMessage = new Label();
+
+		
+		//Populate the fields with values
+		txtTitle.setText(meeting.getTitle());
+		txtStart.setText(meeting.getStartDate().toString());
+		
+		// Adding Nodes to GridPane layout
+		gridPane.add(lblTitle, 0, 0);
+		gridPane.add(txtTitle, 1, 0);
+		gridPane.add(lblStart, 0, 1);
+		gridPane.add(txtStart, 1, 1);
+		gridPane.add(btnLogin, 2, 1);
+		gridPane.add(lblMessage, 1, 2);
+
+
+
+		// Action for btnLogin
+		btnLogin.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				meeting.setTitle(txtTitle.getText());
+				mainRoomList.get(rIndex).getMeetings().set(mIndex, meeting);
+			}
+		});
+
+		// Add HBox and GridPane layout to BorderPane Layout
+		bp.setTop(hb);
+		bp.setCenter(gridPane);
+
+		// Adding BorderPane to the scene and loading CSS
+		Scene scene = new Scene(bp);
+		// scene.getStylesheets().add(
+		// getClass().getClassLoader().getResource("login.css")
+		// .toExternalForm());
+		
+		return scene;
+	}
 }

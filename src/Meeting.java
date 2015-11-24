@@ -40,7 +40,16 @@ public class Meeting {
 	public Date getEndDate(){
 		return endDate;
 	}
+	public String getTitle(){
+		return title;
+	}
 	
+	
+	
+	//setters
+	public void setTitle(String title){
+		this.title = title;
+	}
 	
 	//Returns true or false for if the meeting times overlap. Can be cleaned up if feeling brave. 
 	public boolean overlaps(Meeting m){
