@@ -24,4 +24,19 @@ public class Room {
 		return name;
 	}
 
+	public boolean schedule(Meeting m){
+		boolean flag = true;
+		for(int i = 0; i < meetings.size(); i++){
+			if (meetings.get(i).overlaps(m)){
+				flag = false;
+				break;
+			}
+		}
+		
+		if(flag && capacity > m.getPeople().size()){
+			meetings.add(m);
+			System.out.println("Meeting added to " + name);
+		}
+		return flag;
+	}
 }

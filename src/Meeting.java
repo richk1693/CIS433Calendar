@@ -27,7 +27,7 @@ public class Meeting {
 	}
 	
 	//"send" an email to each person in the meeting.
-	public void NotifyAll(String msg){
+	public void emailAll(String msg){
 		Person recipient;
 		for(int i = 0; i< attendeeList.size(); i++){
 			recipient = attendeeList.get(i);
@@ -88,12 +88,6 @@ public class Meeting {
 		if (m.getEndDate().after(startDate) && m.getStartDate().after(startDate))
 			return false;
 		return true;
-	}
-	
-	public void notifyAttendees(String s){
-		for(int i =0; i< attendeeList.size(); i++){
-			attendeeList.get(i).sendEmail(s);
-		}
 	}
 	
 	public String toString(){
