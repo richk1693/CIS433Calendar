@@ -36,15 +36,15 @@ import javafx.stage.Stage;
 /* Features that need implemented
  
 ******Request a room of a given size for a period of time *DONE*
-Request existing meeting be scheduled with start/end time
+******Request existing meeting be scheduled with start/end time *DONE*
 *****Can't cancel meetings after the start time *DONE*\
 ?No modify after start time
 ********Create meetings. User provides list of attendees. email each attendee *DONE*
 ********Add or remove attendees *DONE*
 ******Totally delete meeting. *DONE*
 ******Email each attendee upon cancel. *DONE*
-If 0 attendees remove meeting occurrences
-Employee interface
+*******If 0 attendees remove meeting occurrences *DONE*
+*********Employee interface *DONE*
 post office package
  */
 
@@ -170,13 +170,14 @@ public class Login2 extends Application {
 	}
 
 	public Scene mainScene() {
-
 		// Create gui elements
 		ToggleGroup group = new ToggleGroup();
 		VBox vBox = new VBox(10);
 		Generator gen = new Generator();
 
 		TextArea taDescription = new TextArea();
+
+		
 		ListView<String> meetingList = new ListView<String>();
 
 		// Populate the meeting list with an initial value
@@ -222,6 +223,12 @@ public class Login2 extends Application {
 			stage.setScene(scheduleExistingScene());
 			stage.show();
 
+		});
+		
+		reserveRoom.setOnAction(e -> {
+			Stage stage = new Stage();
+			stage.setScene(reserveRoomScene());
+			stage.show();
 		});
 
 		refresh.setOnAction(e -> {
@@ -321,7 +328,8 @@ public class Login2 extends Application {
 		buttonContainer.add(createMeeting, 2, 0);
 		buttonContainer.add(reserveRoom, 3, 0);
 		buttonContainer.add(scheduleMeeting, 4, 0);
-		buttonContainer.add(refresh, 0, 1);
+		buttonContainer.add(refresh, 5, 0);
+
 		SplitPane content = new SplitPane();
 		content.setOrientation(Orientation.HORIZONTAL);
 		taDescription.setText("hi");
@@ -333,6 +341,60 @@ public class Login2 extends Application {
 
 		return scene;
 
+	}
+
+	
+	public Scene reserveRoomScene() {
+
+		//Create GUI elements
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
+		GridPane gp = new GridPane();
+
+		Button Schedule = new Button("Reserve Room");
+		Label lblStart = new Label("Start Date");
+		final TextField txtStart = new TextField();
+		Label lblEnd = new Label("End Date");
+		final TextField txtEnd = new TextField();
+		Label lblNum = new Label("# Attending");
+		final TextField txtNum = new TextField();
+		
+	
+		//Populate the start / end date fields with todays info.
+		txtStart.setText(format.format(new Date()));
+		txtEnd.setText(format.format(new Date()));
+		
+		Schedule.setOnAction(e -> {
+			Meeting m = new Meeting(gen.makePeople(Integer.parseInt(txtNum.getText())), new Date(), new Date());
+			try {
+				m.setStartDate(format.parse(txtStart.getText()));
+				m.setEndDate(format.parse(txtEnd.getText()));
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			boolean flag = false;
+			
+			for(int i = 0; i < mainRoomList.size(); i++){
+				if(mainRoomList.get(i).schedule(m)){
+					flag = true;
+					break;
+				}	
+			}
+			
+			if(!flag){
+				System.out.println("No suitable room");
+			}
+		});
+		
+		gp.add(lblNum, 0, 1);
+		gp.add(txtNum, 1, 1);
+		gp.add(lblStart, 0, 2);
+		gp.add(txtStart, 1, 2);
+		gp.add(lblEnd, 0, 3);
+		gp.add(txtEnd, 1, 3);
+		gp.add(Schedule, 0, 20);
+		Scene scene = new Scene(gp);
+
+		return scene;
 	}
 
 	public Scene scheduleExistingScene() {
