@@ -33,22 +33,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-/* Features that need implemented
- 
-******Request a room of a given size for a period of time *DONE*
-******Request existing meeting be scheduled with start/end time *DONE*
-*****Can't cancel meetings after the start time *DONE*\
-?No modify after start time
-********Create meetings. User provides list of attendees. email each attendee *DONE*
-********Add or remove attendees *DONE*
-******Totally delete meeting. *DONE*
-******Email each attendee upon cancel. *DONE*
-*******If 0 attendees remove meeting occurrences *DONE*
-*********Employee interface *DONE*
-post office package
- */
 
-public class Login2 extends Application {
+public class MainForm extends Application {
 
 	String user = "login";
 	String pw = "password";
@@ -115,12 +101,6 @@ public class Login2 extends Application {
 		// Adding text to HBox
 		hb.getChildren().add(text);
 
-		// Add ID's to Nodes
-		bp.setId("bp");
-		gridPane.setId("root");
-		btnLogin.setId("btnLogin");
-		text.setId("text");
-
 		// Action for btnLogin
 		btnLogin.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -160,9 +140,8 @@ public class Login2 extends Application {
 		// getClass().getClassLoader().getResource("login.css")
 		// .toExternalForm());
 
-		// TODO: Change this from mainScene() to scene when done testing main
-		// scene.
-		primaryStage.setScene(mainScene());
+
+		primaryStage.setScene(scene);
 
 		// primaryStage.setResizable(false);
 		primaryStage.show();
@@ -347,7 +326,7 @@ public class Login2 extends Application {
 	public Scene reserveRoomScene() {
 
 		//Create GUI elements
-		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM");
 		GridPane gp = new GridPane();
 
 		Button Schedule = new Button("Reserve Room");
@@ -410,7 +389,7 @@ public class Login2 extends Application {
 		}
 		
 		//Create GUI elements
-		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM");
 		GridPane gp = new GridPane();
 		ComboBox<String> combo = new ComboBox<String>(toObserveable(mainMeetingList));
 		Button Schedule = new Button("Schedule Meeting");
@@ -460,7 +439,7 @@ public class Login2 extends Application {
 	public Scene editScene(int rIndex, int mIndex, boolean editing) {
 
 		Meeting meeting = mainRoomList.get(rIndex).meetings.get(mIndex);
-		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:MM");
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM");
 		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
 
 		// if not editing (creating new) don't load any people
@@ -565,6 +544,7 @@ public class Login2 extends Application {
 			@Override
 			public void handle(ActionEvent arg0) {
 				if(meeting.getPeople().size() == 0){
+					//TODO: off by 1 error.
 					mainRoomList.get(rIndex).getMeetings().remove(mIndex);
 				}
 				meeting.setTitle(txtTitle.getText());
