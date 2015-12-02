@@ -33,7 +33,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-
 public class MainForm extends Application {
 
 	String user = "login";
@@ -140,7 +139,6 @@ public class MainForm extends Application {
 		// getClass().getClassLoader().getResource("login.css")
 		// .toExternalForm());
 
-
 		primaryStage.setScene(scene);
 
 		// primaryStage.setResizable(false);
@@ -156,11 +154,11 @@ public class MainForm extends Application {
 
 		TextArea taDescription = new TextArea();
 
-		
 		ListView<String> meetingList = new ListView<String>();
 
 		// Populate the meeting list with an initial value
-		ObservableList<String> items = FXCollections.observableArrayList("No Room Selected");
+		ObservableList<String> items = FXCollections
+				.observableArrayList("No Room Selected");
 		meetingList.setItems(items);
 
 		// For each room create a radio button
@@ -172,9 +170,11 @@ public class MainForm extends Application {
 
 			// When a button is clicked select the newest meeting
 			rb.setOnAction(e -> {
-				ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
+				ObservableList<String> updatedMeetings = FXCollections
+						.observableArrayList();
 				for (int j = 0; j < currentRoom.getMeetings().size(); j++) {
-					updatedMeetings.add(currentRoom.getMeetings().get(j).toString());
+					updatedMeetings.add(currentRoom.getMeetings().get(j)
+							.toString());
 				}
 				meetingList.setItems(updatedMeetings);
 
@@ -203,7 +203,7 @@ public class MainForm extends Application {
 			stage.show();
 
 		});
-		
+
 		reserveRoom.setOnAction(e -> {
 			Stage stage = new Stage();
 			stage.setScene(reserveRoomScene());
@@ -211,7 +211,8 @@ public class MainForm extends Application {
 		});
 
 		refresh.setOnAction(e -> {
-			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
+			int meetingIndex = meetingList.getSelectionModel()
+					.getSelectedIndex();
 			int roomIndex = -1;
 			// Go through each thing in the toggle group and find the selected
 			// radio button.
@@ -224,7 +225,8 @@ public class MainForm extends Application {
 			}
 
 			// Create a var holding the list of meetings for the selected room
-			ArrayList<Meeting> currentList = mainRoomList.get(roomIndex).getMeetings();
+			ArrayList<Meeting> currentList = mainRoomList.get(roomIndex)
+					.getMeetings();
 
 			meetingList.setItems(toObserveable(currentList));
 
@@ -233,51 +235,65 @@ public class MainForm extends Application {
 		deleteMeeting.setOnAction(e -> {
 
 			// Get the index of the currently selected meeting and room
-			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
-			int roomIndex = -1;
-			// Go through each thing in the toggle group and find the selected
-			// radio button.
-			// There literally HAS TO be an easy way to do this but I can't find
-			// it so i wrote it myself
-			for (int i = 0; i < group.getToggles().size(); i++) {
-				if (group.getToggles().get(i).isSelected()) {
-					roomIndex = i;
+				int meetingIndex = meetingList.getSelectionModel()
+						.getSelectedIndex();
+				int roomIndex = -1;
+				// Go through each thing in the toggle group and find the
+				// selected
+				// radio button.
+				// There literally HAS TO be an easy way to do this but I can't
+				// find
+				// it so i wrote it myself
+				for (int i = 0; i < group.getToggles().size(); i++) {
+					if (group.getToggles().get(i).isSelected()) {
+						roomIndex = i;
+					}
 				}
-			}
 
-			// Create a var holding the list of meetings for the selected room
-			ArrayList<Meeting> currentList = mainRoomList.get(roomIndex).getMeetings();
+				// Create a var holding the list of meetings for the selected
+				// room
+				ArrayList<Meeting> currentList = mainRoomList.get(roomIndex)
+						.getMeetings();
 
-			// If the meeting has already started you can't delete it
-			if (currentList.get(meetingIndex).getStartDate().before(new Date(System.currentTimeMillis()))) {
+				// If the meeting has already started you can't delete it
+				if (currentList.get(meetingIndex).getStartDate()
+						.before(new Date(System.currentTimeMillis()))) {
 
-				System.out.println(currentList.get(meetingIndex).toString());
-				System.out.println("Meeting Started " + currentList.get(roomIndex).getStartDate());
-				System.out.println("This is not a valid delete");
-				return;
-			}
+					System.out
+							.println(currentList.get(meetingIndex).toString());
+					System.out.println("Meeting Started "
+							+ currentList.get(roomIndex).getStartDate());
+					System.out.println("This is not a valid delete");
+					return;
+				}
 
-			// Remove the selected meeting and notify attendees
-			currentList.get(meetingIndex).emailAll("Your meeting has been canceled!");
-			currentList.remove(meetingIndex);
+				// Remove the selected meeting and notify attendees
+				currentList.get(meetingIndex).emailAll(
+						"Your meeting has been canceled!");
+				currentList.remove(meetingIndex);
 
-			// Add the new meeting list back to the room.
-			mainRoomList.get(roomIndex).setMeetings(currentList);
+				// Add the new meeting list back to the room.
+				mainRoomList.get(roomIndex).setMeetings(currentList);
 
-			// Update the list of meetings gui (the same as on click for radio
-			// buttons)
-			ObservableList<String> updatedMeetings = FXCollections.observableArrayList();
-			for (int j = 0; j < mainRoomList.get(roomIndex).getMeetings().size(); j++) {
-				updatedMeetings.add(mainRoomList.get(roomIndex).getMeetings().get(j).toString());
-			}
-			meetingList.setItems(updatedMeetings);
+				// Update the list of meetings gui (the same as on click for
+				// radio
+				// buttons)
+				ObservableList<String> updatedMeetings = FXCollections
+						.observableArrayList();
+				for (int j = 0; j < mainRoomList.get(roomIndex).getMeetings()
+						.size(); j++) {
+					updatedMeetings.add(mainRoomList.get(roomIndex)
+							.getMeetings().get(j).toString());
+				}
+				meetingList.setItems(updatedMeetings);
 
-		});
+			});
 
 		// Action for editing a meeting
 		editMeeting.setOnAction(e -> {
 			int roomIndex = -1;
-			int meetingIndex = meetingList.getSelectionModel().getSelectedIndex();
+			int meetingIndex = meetingList.getSelectionModel()
+					.getSelectedIndex();
 
 			for (int i = 0; i < group.getToggles().size(); i++) {
 				if (group.getToggles().get(i).isSelected()) {
@@ -322,10 +338,9 @@ public class MainForm extends Application {
 
 	}
 
-	
 	public Scene reserveRoomScene() {
 
-		//Create GUI elements
+		// Create GUI elements
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM");
 		GridPane gp = new GridPane();
 
@@ -336,14 +351,14 @@ public class MainForm extends Application {
 		final TextField txtEnd = new TextField();
 		Label lblNum = new Label("# Attending");
 		final TextField txtNum = new TextField();
-		
-	
-		//Populate the start / end date fields with todays info.
+
+		// Populate the start / end date fields with todays info.
 		txtStart.setText(format.format(new Date()));
 		txtEnd.setText(format.format(new Date()));
-		
+
 		Schedule.setOnAction(e -> {
-			Meeting m = new Meeting(gen.makePeople(Integer.parseInt(txtNum.getText())), new Date(), new Date());
+			Meeting m = new Meeting(gen.makePeople(Integer.parseInt(txtNum
+					.getText())), new Date(), new Date());
 			try {
 				m.setStartDate(format.parse(txtStart.getText()));
 				m.setEndDate(format.parse(txtEnd.getText()));
@@ -351,19 +366,19 @@ public class MainForm extends Application {
 				e1.printStackTrace();
 			}
 			boolean flag = false;
-			
-			for(int i = 0; i < mainRoomList.size(); i++){
-				if(mainRoomList.get(i).schedule(m)){
+
+			for (int i = 0; i < mainRoomList.size(); i++) {
+				if (mainRoomList.get(i).schedule(m)) {
 					flag = true;
 					break;
-				}	
+				}
 			}
-			
-			if(!flag){
+
+			if (!flag) {
 				System.out.println("No suitable room");
 			}
 		});
-		
+
 		gp.add(lblNum, 0, 1);
 		gp.add(txtNum, 1, 1);
 		gp.add(lblStart, 0, 2);
@@ -377,34 +392,35 @@ public class MainForm extends Application {
 	}
 
 	public Scene scheduleExistingScene() {
-		//If there are no pre-existing meetings create one.
+		// If there are no pre-existing meetings create one.
 		if (mainMeetingList.size() == 0) {
 
-			Meeting m = new Meeting("Preexisting Meeting 1", gen.makePeople(5), 
-					new Date(System.currentTimeMillis()-(1000*60*60)),
-					new Date(System.currentTimeMillis()+(1000*60*60)));
-			
+			Meeting m = new Meeting("Preexisting Meeting 1", gen.makePeople(5),
+					new Date(System.currentTimeMillis() - (1000 * 60 * 60)),
+					new Date(System.currentTimeMillis() + (1000 * 60 * 60)));
+
 			m.setTitle("Premade Meeting 1");
 			mainMeetingList.add(m);
 		}
-		
-		//Create GUI elements
+
+		// Create GUI elements
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM");
 		GridPane gp = new GridPane();
-		ComboBox<String> combo = new ComboBox<String>(toObserveable(mainMeetingList));
+		ComboBox<String> combo = new ComboBox<String>(
+				toObserveable(mainMeetingList));
 		Button Schedule = new Button("Schedule Meeting");
 		Label lblStart = new Label("Start Date");
 		final TextField txtStart = new TextField();
 		Label lblEnd = new Label("End Date");
 		final TextField txtEnd = new TextField();
-		
-	
-		//Populate the start / end date fields with todays info.
+
+		// Populate the start / end date fields with todays info.
 		txtStart.setText(format.format(new Date()));
 		txtEnd.setText(format.format(new Date()));
-		
+
 		Schedule.setOnAction(e -> {
-			Meeting m = mainMeetingList.get(combo.getSelectionModel().getSelectedIndex());
+			Meeting m = mainMeetingList.get(combo.getSelectionModel()
+					.getSelectedIndex());
 			try {
 				m.setStartDate(format.parse(txtStart.getText()));
 				m.setEndDate(format.parse(txtEnd.getText()));
@@ -412,19 +428,19 @@ public class MainForm extends Application {
 				e1.printStackTrace();
 			}
 			boolean flag = false;
-			
-			for(int i = 0; i < mainRoomList.size(); i++){
-				if(mainRoomList.get(i).schedule(m)){
+
+			for (int i = 0; i < mainRoomList.size(); i++) {
+				if (mainRoomList.get(i).schedule(m)) {
 					flag = true;
 					break;
-				}	
+				}
 			}
-			
-			if(!flag){
+
+			if (!flag) {
 				System.out.println("No suitable room");
 			}
 		});
-		
+
 		gp.add(combo, 0, 1);
 		gp.add(lblStart, 0, 2);
 		gp.add(txtStart, 1, 2);
@@ -440,7 +456,8 @@ public class MainForm extends Application {
 
 		Meeting meeting = mainRoomList.get(rIndex).meetings.get(mIndex);
 		SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:MM");
-		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
+		ArrayList<Person> peopleList = mainRoomList.get(rIndex).getMeetings()
+				.get(mIndex).getPeople();
 
 		// if not editing (creating new) don't load any people
 		if (!editing)
@@ -484,8 +501,7 @@ public class MainForm extends Application {
 			txtStart.setText(format.format(meeting.getStartDate()));
 			txtEnd.setText(format.format(meeting.getEndDate()));
 			attendeeList.setItems(toObserveable(peopleList));
-		}
-		else{
+		} else {
 			txtStart.setText(format.format(new Date()));
 			txtEnd.setText(format.format(new Date()));
 		}
@@ -519,9 +535,11 @@ public class MainForm extends Application {
 		btnAdd.setOnAction(e -> {
 
 			ArrayList<Person> result = peopleList;
-			result.add(new Person(txtName.getText(), txtEmail.getText(), txtJob.getText()));
+			result.add(new Person(txtName.getText(), txtEmail.getText(), txtJob
+					.getText()));
 			attendeeList.setItems(toObserveable(result));
-			mainRoomList.get(rIndex).getMeetings().get(mIndex).setPeople(result);
+			mainRoomList.get(rIndex).getMeetings().get(mIndex)
+					.setPeople(result);
 			txtName.setText("");
 			txtEmail.setText("");
 			txtJob.setText("");
@@ -531,8 +549,10 @@ public class MainForm extends Application {
 		// Action for deleting person
 		btnDelete.setOnAction(e -> {
 			int index = attendeeList.getSelectionModel().getSelectedIndex();
-			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople();
-			mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople().remove(index);
+			ArrayList<Person> result = mainRoomList.get(rIndex).getMeetings()
+					.get(mIndex).getPeople();
+			mainRoomList.get(rIndex).getMeetings().get(mIndex).getPeople()
+					.remove(index);
 			attendeeList.setItems(toObserveable(result));
 			txtName.setText("");
 			txtEmail.setText("");
@@ -543,22 +563,27 @@ public class MainForm extends Application {
 		btnSave.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				if(meeting.getPeople().size() == 0){
-					//TODO: off by 1 error.
+				// If no attendees remove the meeting
+				if (meeting.getPeople().size() == 0) {
 					mainRoomList.get(rIndex).getMeetings().remove(mIndex);
-				}
-				meeting.setTitle(txtTitle.getText());
-				try {
-					meeting.setStartDate(format.parse(txtStart.getText()));
-					meeting.setEndDate(format.parse(txtEnd.getText()));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				if (editing) {
-					mainRoomList.get(rIndex).getMeetings().set(mIndex, meeting);
-				} else {
-					mainMeetingList.add(meeting);
-					mainMeetingList.get(mainMeetingList.size()-1).emailAll("Meeting Scheduled");
+				} 
+				//Else update changes to the meeting.
+				else {
+					meeting.setTitle(txtTitle.getText());
+					try {
+						meeting.setStartDate(format.parse(txtStart.getText()));
+						meeting.setEndDate(format.parse(txtEnd.getText()));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					if (editing) {
+						mainRoomList.get(rIndex).getMeetings()
+								.set(mIndex, meeting);
+					} else {
+						mainMeetingList.add(meeting);
+						mainMeetingList.get(mainMeetingList.size() - 1)
+								.emailAll("Meeting Scheduled");
+					}
 				}
 			}
 		});
